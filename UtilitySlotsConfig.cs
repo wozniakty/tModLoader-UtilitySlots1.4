@@ -13,23 +13,23 @@ namespace UtilitySlots {
         public static UtilitySlotsConfig Instance;
 
         [DefaultValue(false)]
-        [Label("$Mods.UtilitySlot.AllowAccessorySlots_Label")]
+        [Label("$Mods.UtilitySlots.AllowAccessorySlots_Label")]
         public bool AllowAccessorySlots;
 
-        /*[Header("$Mods.UtilitySlot.SlotLocation_Header")]
+        /*[Header("$Mods.UtilitySlots.SlotLocation_Header")]
         [DefaultValue(AccessorySlotsUI.Location.Accessories)]
-        [Label("$Mods.UtilitySlot.SlotLocation_Label")]
+        [Label("$Mods.UtilitySlots.SlotLocation_Label")]
         [DrawTicks]
         public AccessorySlotsUI.Location SlotLocation;
 
         [DefaultValue(false)]
-        [Tooltip("$Mods.UtilitySlot.ShowCustomLocationPanel_Tooltip")]
-        [Label("$Mods.UtilitySlot.ShowCustomLocationPanel_Label")]
+        [Tooltip("$Mods.UtilitySlots.ShowCustomLocationPanel_Tooltip")]
+        [Label("$Mods.UtilitySlots.ShowCustomLocationPanel_Label")]
         public bool ShowCustomLocationPanel;
 
         [DefaultValue(false)] 
-        [Tooltip("$Mods.UtilitySlot.ResetCustomSlotLocation_Tooltip")]
-        [Label("$Mods.UtilitySlot.ResetCustomSlotLocation_Label")]
+        [Tooltip("$Mods.UtilitySlots.ResetCustomSlotLocation_Tooltip")]
+        [Label("$Mods.UtilitySlots.ResetCustomSlotLocation_Label")]
         public bool ResetCustomSlotLocation;*/
 
         public override void OnChanged() {
