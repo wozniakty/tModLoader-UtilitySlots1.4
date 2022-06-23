@@ -7,7 +7,7 @@ This mod adds dedicated utility slots for accessories that are all must-haves, s
 Obviously this will have an impact on balance, so I'm working on adding a config option to disable the reforge modifiers on the utility accessories to not give too many stats.
 
 [ChangeLog]
-v1.1.0
+v1.1.1
 * Implemented compatibility with WingSlot, the original mod, so having both installed works as intended.
 
 ------
