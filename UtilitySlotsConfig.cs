@@ -32,6 +32,11 @@ namespace UtilitySlots {
         [Label("$Mods.UtilitySlots.ResetCustomSlotLocation_Label")]
         public bool ResetCustomSlotLocation;*/
 
+        [DefaultValue(false)]
+        [Label("$Mods.UtilitySlots.PreventUtilityModifiers_Label")]
+        [Tooltip("$Mods.UtilitySlots.PreventUtilityModifiers_Tooltip")]
+        public bool PreventUtilityModifiers;
+
         public override void OnChanged() {
             /*if(lastSlotLocation == AccessorySlotsUI.Location.Custom && SlotLocation != AccessorySlotsUI.Location.Custom) {
                 ShowCustomLocationPanel = false;
@@ -68,6 +73,9 @@ namespace UtilitySlots {
                 UtilitySlots.WingUI.ResetPosition();
                 ResetCustomSlotLocation = false;
             }*/
+
+            if(PreventUtilityModifiers != UtilitySlots.DisableUtilitySlotModifiers)
+                UtilitySlots.DisableUtilitySlotModifiers = PreventUtilityModifiers;
         }
     }
 }

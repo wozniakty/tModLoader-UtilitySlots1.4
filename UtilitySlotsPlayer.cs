@@ -399,6 +399,8 @@ namespace UtilitySlots {
         /// <param name="fromInventory">whether the item is being equipped from the inventory</param>
         public void EquipItem(Item item, UtilityType utilityType, EquipType type, bool fromInventory) {
             if(item == null) return;
+            if (UtilitySlots.DisableUtilitySlotModifiers)
+                item.prefix = 0;
 
             var slot = GetSlot(utilityType, type);
 

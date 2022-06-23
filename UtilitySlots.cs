@@ -24,6 +24,7 @@ namespace UtilitySlots {
         public static ShoeSlotUI ShoeUI;
 
         public static bool WingSlotModInstalled;
+        public static bool DisableUtilitySlotModifiers = false;
 
         public override void Load() {
             rightClickOverrides = new List<Func<bool>>();

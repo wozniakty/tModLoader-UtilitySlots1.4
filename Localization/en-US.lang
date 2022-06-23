@@ -14,3 +14,5 @@ ShowCustomLocationPanel_Tooltip=Show the draggable panel for a custom location
 ShowCustomLocationPanel_Label=Show custom location panel
 ResetCustomSlotLocation_Tooltip=Reset custom panel location if it disappears from the screen
 ResetCustomSlotLocation_Label=Reset custom location
+PreventUtilityModifiers_Label=Disable prefix modifiers on utility items
+PreventUtilityModifiers_Tooltip=Causes accessory modifiers (like Warding or Quick) to be removed from utility items on equip to have less of an impact on game balance with 3 extra slots

@@ -1,6 +1,6 @@
 ﻿displayName=Utility Slots
 author=thedoctor
-version=1.1.3
+version=1.2.0
 noCompile=false
 homepage=https://github.com/wozniakty/tModLoader-UtilitySlots
 hideCode=false
