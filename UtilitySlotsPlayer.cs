@@ -3,14 +3,15 @@ using System.Linq;
 using CustomSlot;
 using CustomSlot.UI;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using Terraria.UI;
-using UtilitySlots.UI;
+using UtilitySlots14.UI;
 
-namespace UtilitySlots {
+namespace UtilitySlots14 {
     internal class UtilitySlotsPlayer : ModPlayer {
         public enum EquipType {
             Accessory,
@@ -91,18 +92,18 @@ namespace UtilitySlots {
                 EquipItem(EquippedWings, UtilityType.Wing, EquipType.Accessory, false);
                 EquipItem(SocialWings, UtilityType.Wing, EquipType.Social, false);
                 EquipItem(WingsDye, UtilityType.Wing, EquipType.Dye, false);
-                UtilitySlots.WingUI.EquipSlot.ItemVisible = WingsVisible;
+                UtilitySlots.USSystem.WingUI.EquipSlot.ItemVisible = WingsVisible;
             }
 
             EquipItem(EquippedBalloons, UtilityType.Balloon, EquipType.Accessory, false);
             EquipItem(SocialBalloons, UtilityType.Balloon, EquipType.Social, false);
             EquipItem(BalloonsDye, UtilityType.Balloon, EquipType.Dye, false);
-            UtilitySlots.BalloonUI.EquipSlot.ItemVisible = BalloonsVisible;
+            UtilitySlots.USSystem.BalloonUI.EquipSlot.ItemVisible = BalloonsVisible;
 
             EquipItem(EquippedShoes, UtilityType.Shoe, EquipType.Accessory, false);
             EquipItem(SocialShoes, UtilityType.Shoe, EquipType.Social, false);
             EquipItem(ShoesDye, UtilityType.Shoe, EquipType.Dye, false);
-            UtilitySlots.ShoeUI.EquipSlot.ItemVisible = ShoesVisible;
+            UtilitySlots.USSystem.ShoeUI.EquipSlot.ItemVisible = ShoesVisible;
         }
 
         public override void clientClone(ModPlayer clientClone) {
@@ -157,9 +158,9 @@ namespace UtilitySlots {
 
         // TODO: fix sending packets to other players
         public override void SyncPlayer(int toWho, int fromWho, bool newPlayer) {
-            ModPacket packet = mod.GetPacket();
+            ModPacket packet = Mod.GetPacket();
             packet.Write((byte)PacketMessageType.All);
-            packet.Write((byte)player.whoAmI);
+            packet.Write((byte)Player.whoAmI);
             if (!UtilitySlots.WingSlotModInstalled)
             {
                 ItemIO.Send(EquippedWings, packet);
@@ -175,72 +176,71 @@ namespace UtilitySlots {
             packet.Send(toWho, fromWho);
         }
 
-        public override void ModifyDrawInfo(ref PlayerDrawInfo drawInfo) {
+        public override void ModifyDrawInfo(ref PlayerDrawSet drawInfo) {
             if (!UtilitySlots.WingSlotModInstalled)
             {
                 if (WingsDye.stack > 0 && (EquippedWings.stack > 0 || SocialWings.stack > 0))
                 {
-                    drawInfo.wingShader = WingsDye.dye;
+                    drawInfo.cWings = WingsDye.dye;
                 }
             }
             if (BalloonsDye.stack > 0 && (EquippedBalloons.stack > 0 || SocialBalloons.stack > 0))
             {
-                drawInfo.balloonShader = BalloonsDye.dye;
+                drawInfo.cBalloon = BalloonsDye.dye;
             }
             if (ShoesDye.stack > 0 && (EquippedShoes.stack > 0 || SocialShoes.stack > 0))
             {
-                drawInfo.shoeShader = ShoesDye.dye;
+                drawInfo.cShoe = ShoesDye.dye;
             }
         }
 
         /// <summary>
         /// Update player with the equipped wings.
         /// </summary>
-        public override void UpdateEquips(ref bool wallSpeedBuff, ref bool tileSpeedBuff, ref bool tileRangeBuff) {
+        public override void UpdateEquips() {
             if (!UtilitySlots.WingSlotModInstalled)
             {
-                if (UtilitySlots.WingUI != null)
+                if (UtilitySlots.USSystem.WingUI != null)
                 {
                     if (EquippedWings.stack > 0)
                     {
-                        player.VanillaUpdateAccessory(player.whoAmI, EquippedWings, !WingsVisible, ref wallSpeedBuff,
-                                                      ref tileSpeedBuff, ref tileRangeBuff);
-                        player.VanillaUpdateEquip(EquippedWings);
+                        Player.VanillaUpdateAccessory(Player.whoAmI, EquippedWings, !WingsVisible);
+                        Player.VanillaUpdateEquip(EquippedWings);
                     }
 
 
                     if (SocialWings.stack > 0)
                     {
-                        player.VanillaUpdateVanityAccessory(SocialWings);
+                        Player.VanillaUpdateVanityAccessory(SocialWings);
                     }
                 }
             }
-            if (UtilitySlots.BalloonUI != null)
+            if (UtilitySlots.USSystem.BalloonUI != null)
             {
                 if (EquippedBalloons.stack > 0)
                 {
-                    player.VanillaUpdateAccessory(player.whoAmI, EquippedBalloons, !BalloonsVisible, ref wallSpeedBuff,
+                    Player.VanillaUpdateAccessory(Player.whoAmI, EquippedBalloons, !BalloonsVisible, ref wallSpeedBuff,
                                                   ref tileSpeedBuff, ref tileRangeBuff);
-                    player.VanillaUpdateEquip(EquippedBalloons);
+                    Player.VanillaUpdateEquip(EquippedBalloons);
                 }
 
                 if (SocialBalloons.stack > 0)
                 {
-                    player.VanillaUpdateVanityAccessory(SocialBalloons);
+                    Player.VanillaUpdateVanityAccessory(SocialBalloons);
                 }
             }
-            if (UtilitySlots.ShoeUI != null)
+            if (UtilitySlots.USSystem.ShoeUI != null)
             {
                 if (EquippedShoes.stack > 0)
                 {
-                    player.VanillaUpdateAccessory(player.whoAmI, EquippedShoes, !ShoesVisible, ref wallSpeedBuff,
+                    Player.VanillaUpdateAccessory(Player.whoAmI, EquippedShoes, !ShoesVisible, ref wallSpeedBuff,
                                                   ref tileSpeedBuff, ref tileRangeBuff);
-                    player.VanillaUpdateEquip(EquippedShoes);
+                    Player.VanillaUpdateEquip(EquippedShoes);
                 }
 
                 if (SocialShoes.stack > 0)
                 {
-                    player.VanillaUpdateVanityAccessory(SocialShoes);
+                    Player.VanillaUpdateVanityAccessory(SocialShoes);
                 }
             }
         }
@@ -249,47 +249,48 @@ namespace UtilitySlots {
         /// Since there is no tModLoader hook in UpdateDyes, we use PreUpdateBuffs which is right after that.
         /// </summary>
         public override void PreUpdateBuffs() {
-            if(!UtilitySlots.WingSlotModInstalled && UtilitySlots.WingUI != null)
+            if(!UtilitySlots.WingSlotModInstalled && UtilitySlots.USSystem.WingUI != null)
             {
                 if (WingsDye.stack > 0 && (SocialWings.stack > 0 || (EquippedWings.stack > 0 && WingsVisible)))
-                    player.cWings = WingsDye.dye;
+                    Player.cWings = WingsDye.dye;
             }
 
-            if(UtilitySlots.BalloonUI != null)
+            if(UtilitySlots.USSystem.BalloonUI != null)
                 if (BalloonsDye.stack > 0 && (SocialBalloons.stack > 0 || (EquippedBalloons.stack > 0 && BalloonsVisible)))
-                    player.cBalloon = BalloonsDye.dye;
+                    Player.cBalloon = BalloonsDye.dye;
 
-            if(UtilitySlots.ShoeUI != null)
+            if(UtilitySlots.USSystem.ShoeUI != null)
                 if (ShoesDye.stack > 0 && (SocialShoes.stack > 0 || (EquippedShoes.stack > 0 && ShoesVisible)))
-                    player.cShoe = ShoesDye.dye;
+                    Player.cShoe = ShoesDye.dye;
         }
 
         /// <summary>
         /// Drop items if the player character is Medium or Hardcore.
         /// </summary>
         public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource) {
-            if(player.difficulty == 0) return;
+            if(Player.difficulty == 0) return;
+            var source = Player.GetSource_Death();
 
             if (!UtilitySlots.WingSlotModInstalled)
             {
-                player.QuickSpawnClonedItem(EquippedWings);
-                player.QuickSpawnClonedItem(SocialWings);
-                player.QuickSpawnClonedItem(WingsDye);
+                Player.QuickSpawnClonedItem(source, EquippedWings);
+                Player.QuickSpawnClonedItem(source, SocialWings);
+                Player.QuickSpawnClonedItem(source, WingsDye);
                 EquipItem(new Item(), UtilityType.Wing, EquipType.Accessory, false);
                 EquipItem(new Item(), UtilityType.Wing, EquipType.Social, false);
                 EquipItem(new Item(), UtilityType.Wing, EquipType.Dye, false);
             }
 
-            player.QuickSpawnClonedItem(EquippedBalloons);
-            player.QuickSpawnClonedItem(SocialBalloons);
-            player.QuickSpawnClonedItem(BalloonsDye);
+            Player.QuickSpawnClonedItem(source, EquippedBalloons);
+            Player.QuickSpawnClonedItem(source, SocialBalloons);
+            Player.QuickSpawnClonedItem(source, BalloonsDye);
             EquipItem(new Item(), UtilityType.Balloon, EquipType.Accessory, false);
             EquipItem(new Item(), UtilityType.Balloon, EquipType.Social, false);
             EquipItem(new Item(), UtilityType.Balloon, EquipType.Dye, false);
 
-            player.QuickSpawnClonedItem(EquippedShoes);
-            player.QuickSpawnClonedItem(SocialShoes);
-            player.QuickSpawnClonedItem(ShoesDye);
+            Player.QuickSpawnClonedItem(source, EquippedShoes);
+            Player.QuickSpawnClonedItem(source, SocialShoes);
+            Player.QuickSpawnClonedItem(source, ShoesDye);
             EquipItem(new Item(), UtilityType.Shoe, EquipType.Accessory, false);
             EquipItem(new Item(), UtilityType.Shoe, EquipType.Social, false);
             EquipItem(new Item(), UtilityType.Shoe, EquipType.Dye, false);
@@ -298,38 +299,35 @@ namespace UtilitySlots {
         /// <summary>
         /// Save player settings.
         /// </summary>
-        public override TagCompound Save() {
-            var saveTags = new TagCompound {
-                { BalloonPanelXTag, UtilitySlots.BalloonUI?.PanelCoordinates.X },
-                { BalloonPanelYTag, UtilitySlots.BalloonUI?.PanelCoordinates.Y },
-                { BalloonHiddenTag, BalloonsVisible },
-                { BalloonTag, ItemIO.Save(EquippedBalloons) },
-                { SocialBalloonTag, ItemIO.Save(SocialBalloons) },
-                { BalloonsDyeTag, ItemIO.Save(BalloonsDye) },
+        public override void SaveData(TagCompound tag) {
+            tag[BalloonPanelXTag] = UtilitySlots.USSystem.BalloonUI?.PanelCoordinates.X;
+            tag[BalloonPanelYTag] = UtilitySlots.USSystem.BalloonUI?.PanelCoordinates.Y;
+            tag[BalloonHiddenTag] = BalloonsVisible;
+            tag[BalloonTag] = ItemIO.Save(EquippedBalloons);
+            tag[SocialBalloonTag] = ItemIO.Save(SocialBalloons);
+            tag[BalloonsDyeTag] = ItemIO.Save(BalloonsDye);
 
-                { ShoePanelXTag, UtilitySlots.ShoeUI?.PanelCoordinates.X },
-                { ShoePanelYTag, UtilitySlots.ShoeUI?.PanelCoordinates.Y },
-                { ShoeHiddenTag, ShoesVisible },
-                { ShoeTag, ItemIO.Save(EquippedShoes) },
-                { SocialShoeTag, ItemIO.Save(SocialShoes) },
-                { ShoeDyeTag, ItemIO.Save(ShoesDye) }
-            };
+            tag[ShoePanelXTag] = UtilitySlots.USSystem.ShoeUI?.PanelCoordinates.X;
+            tag[ShoePanelYTag] = UtilitySlots.USSystem.ShoeUI?.PanelCoordinates.Y;
+            tag[ShoeHiddenTag] = ShoesVisible;
+            tag[ShoeTag] = ItemIO.Save(EquippedShoes);
+            tag[SocialShoeTag] = ItemIO.Save(SocialShoes);
+            tag[ShoeDyeTag] = ItemIO.Save(ShoesDye);
             if (!UtilitySlots.WingSlotModInstalled)
             {
-                saveTags.Add(WingPanelXTag, UtilitySlots.WingUI?.PanelCoordinates.X);
-                saveTags.Add(WingPanelYTag, UtilitySlots.WingUI?.PanelCoordinates.Y);
-                saveTags.Add(WingHiddenTag, WingsVisible);
-                saveTags.Add(WingsTag, ItemIO.Save(EquippedWings));
-                saveTags.Add(SocialWingsTag, ItemIO.Save(SocialWings));
-                saveTags.Add(WingsDyeTag, ItemIO.Save(WingsDye));
+                tag[WingPanelXTag] = UtilitySlots.USSystem.WingUI?.PanelCoordinates.X;
+                tag[WingPanelYTag] = UtilitySlots.USSystem.WingUI?.PanelCoordinates.Y;
+                tag[WingHiddenTag] = WingsVisible;
+                tag[WingsTag] = ItemIO.Save(EquippedWings);
+                tag[SocialWingsTag] = ItemIO.Save(SocialWings);
+                tag[WingsDyeTag] = ItemIO.Save(WingsDye);
             }
-            return saveTags;
         }
 
         /// <summary>
         /// Load the mod settings.
         /// </summary>
-        public override void Load(TagCompound tag) {
+        public override void LoadData(TagCompound tag) {
             if (!UtilitySlots.WingSlotModInstalled)
             {
                 if (tag.ContainsKey(WingsTag))
@@ -345,10 +343,10 @@ namespace UtilitySlots {
                     WingsVisible = tag.GetBool(WingHiddenTag);
 
                 if (tag.ContainsKey(WingPanelXTag))
-                    UtilitySlots.WingUI.PanelCoordinates.X = tag.GetFloat(WingPanelXTag);
+                    UtilitySlots.USSystem.WingUI.PanelCoordinates.X = tag.GetFloat(WingPanelXTag);
 
                 if (tag.ContainsKey(WingPanelYTag))
-                    UtilitySlots.WingUI.PanelCoordinates.Y = tag.GetFloat(WingPanelYTag);
+                    UtilitySlots.USSystem.WingUI.PanelCoordinates.Y = tag.GetFloat(WingPanelYTag);
             }
 
 
@@ -365,10 +363,10 @@ namespace UtilitySlots {
                 BalloonsVisible = tag.GetBool(BalloonHiddenTag);
 
             if (tag.ContainsKey(BalloonPanelXTag))
-                UtilitySlots.BalloonUI.PanelCoordinates.X = tag.GetFloat(BalloonPanelXTag);
+                UtilitySlots.USSystem.BalloonUI.PanelCoordinates.X = tag.GetFloat(BalloonPanelXTag);
 
             if (tag.ContainsKey(BalloonPanelYTag))
-                UtilitySlots.BalloonUI.PanelCoordinates.Y = tag.GetFloat(BalloonPanelYTag);
+                UtilitySlots.USSystem.BalloonUI.PanelCoordinates.Y = tag.GetFloat(BalloonPanelYTag);
 
 
             if (tag.ContainsKey(ShoeTag))
@@ -384,10 +382,10 @@ namespace UtilitySlots {
                 ShoesVisible = tag.GetBool(ShoeHiddenTag);
 
             if (tag.ContainsKey(ShoePanelXTag))
-                UtilitySlots.ShoeUI.PanelCoordinates.X = tag.GetFloat(ShoePanelXTag);
+                UtilitySlots.USSystem.ShoeUI.PanelCoordinates.X = tag.GetFloat(ShoePanelXTag);
 
             if (tag.ContainsKey(ShoePanelYTag))
-                UtilitySlots.ShoeUI.PanelCoordinates.Y = tag.GetFloat(ShoePanelYTag);
+                UtilitySlots.USSystem.ShoeUI.PanelCoordinates.Y = tag.GetFloat(ShoePanelYTag);
         }
 
         /// <summary>
@@ -406,47 +404,47 @@ namespace UtilitySlots {
 
             if(type == EquipType.Dye) {
                 if(utilityType == UtilityType.Wing)
-                    if(WingsDye.IsNotTheSameAs(item))
+                    if(WingsDye.IsNotSameTypePrefixAndStack(item))
                         WingsDye = item.Clone();
                 if (utilityType == UtilityType.Balloon)
-                    if (BalloonsDye.IsNotTheSameAs(item))
+                    if (BalloonsDye.IsNotSameTypePrefixAndStack(item))
                         BalloonsDye = item.Clone();
                 if (utilityType == UtilityType.Shoe)
-                    if (ShoesDye.IsNotTheSameAs(item))
+                    if (ShoesDye.IsNotSameTypePrefixAndStack(item))
                         ShoesDye = item.Clone();
             }
             else if(type == EquipType.Social) {
                 if(utilityType == UtilityType.Wing)
-                    if(SocialWings.IsNotTheSameAs(item))
+                    if(SocialWings.IsNotSameTypePrefixAndStack(item))
                         SocialWings = item.Clone();
                 if (utilityType == UtilityType.Balloon)
-                    if (SocialBalloons.IsNotTheSameAs(item))
+                    if (SocialBalloons.IsNotSameTypePrefixAndStack(item))
                         SocialBalloons = item.Clone();
                 if (utilityType == UtilityType.Shoe)
-                    if (SocialShoes.IsNotTheSameAs(item))
+                    if (SocialShoes.IsNotSameTypePrefixAndStack(item))
                         SocialShoes = item.Clone();
             }
             else {
                 if(utilityType == UtilityType.Wing)
-                    if(EquippedWings.IsNotTheSameAs(item))
+                    if(EquippedWings.IsNotSameTypePrefixAndStack(item))
                         EquippedWings = item.Clone();
                 if (utilityType == UtilityType.Balloon)
-                    if (EquippedBalloons.IsNotTheSameAs(item))
+                    if (EquippedBalloons.IsNotSameTypePrefixAndStack(item))
                         EquippedBalloons = item.Clone();
                 if (utilityType == UtilityType.Shoe)
-                    if (EquippedShoes.IsNotTheSameAs(item))
+                    if (EquippedShoes.IsNotSameTypePrefixAndStack(item))
                         EquippedShoes = item.Clone();
             }
 
             if(fromInventory) {
                 item.favorited = false;
 
-                int fromSlot = Array.FindIndex(player.inventory, i => i == item);
+                int fromSlot = Array.FindIndex(Player.inventory, i => i == item);
 
                 if(fromSlot < 0) return;
 
-                player.inventory[fromSlot] = slot.Item.Clone();
-                Main.PlaySound(SoundID.Grab);
+                Player.inventory[fromSlot] = slot.Item.Clone();
+                SoundEngine.PlaySound(SoundID.Grab);
                 Recipe.FindRecipes();
             }
 
@@ -455,11 +453,20 @@ namespace UtilitySlots {
 
         private CustomItemSlot GetSlot(UtilityType utilityType, EquipType equipType)
         {
-            var uiSlot = utilityType == UtilityType.Wing ? (UtilitySlotUI)UtilitySlots.WingUI :
-                utilityType == UtilityType.Balloon ? (UtilitySlotUI)UtilitySlots.BalloonUI : (UtilitySlotUI)UtilitySlots.ShoeUI;
+            UtilitySlotUI uiSlot = utilityType switch {
+                UtilityType.Wing => UtilitySlots.USSystem.WingUI,
+                UtilityType.Balloon => UtilitySlots.USSystem.BalloonUI,
+                UtilityType.Shoe => UtilitySlots.USSystem.ShoeUI,
+                _ => throw new ArgumentOutOfRangeException(nameof(utilityType))
+            };
 
-            return equipType == EquipType.Social ? uiSlot.SocialSlot :
-                equipType == EquipType.Accessory ? uiSlot.EquipSlot : uiSlot.DyeSlot;
+            return equipType switch
+            {
+                EquipType.Accessory => uiSlot.EquipSlot,
+                EquipType.Social => uiSlot.SocialSlot,
+                EquipType.Dye => uiSlot.DyeSlot,
+                _ => throw new ArgumentOutOfRangeException(nameof(equipType))
+            };
         }
 
         /// <summary>
@@ -494,19 +501,14 @@ namespace UtilitySlots {
                     ShoesDye = e.NewItem.Clone();
         }
 
-        private UtilityType GetTypeFromTag(CustomItemSlot slot)
-        {
-            switch (slot.Tag)
+        private UtilityType GetTypeFromTag(CustomItemSlot slot) =>
+            slot.Tag switch
             {
-                case "WingSlot":
-                    return UtilityType.Wing;
-                case "BalloonSlot":
-                    return UtilityType.Balloon;
-                case "ShoeSlot":
-                    return UtilityType.Shoe;
-            }
-            throw new NotImplementedException();
-        }
+                "WingSlot" => UtilityType.Wing,
+                "BalloonSlot" => UtilityType.Balloon,
+                "ShoeSlot" => UtilityType.Shoe,
+                _ => throw new NotImplementedException()
+            };
 
         /// <summary>
         /// Fires when the visibility of an item in a slot is toggled.

@@ -1,16 +1,16 @@
 ﻿using Terraria;
 using Terraria.ModLoader;
-using UtilitySlots.UI;
+using UtilitySlots14.UI;
 
-namespace UtilitySlots {
+namespace UtilitySlots14 {
     internal class GlobalWingItem : GlobalItem {
-        public override bool CanEquipAccessory(Item item, Player player, int slot) {
-            if(UtilitySlots.WingSlotModInstalled || item.wingSlot <= 0) return base.CanEquipAccessory(item, player, slot);
+        public override bool CanEquipAccessory(Item item, Player player, int slot, bool modded) {
+            if(UtilitySlots.WingSlotModInstalled || item.wingSlot <= 0) return base.CanEquipAccessory(item, player, slot, modded);
 
-            WingSlotUI ui = UtilitySlots.WingUI;
+            WingSlotUI ui = UtilitySlots.USSystem.WingUI;
 
             return ui.Panel.ContainsPoint(Main.MouseScreen) ||
-                   (UtilitySlotsConfig.Instance.AllowAccessorySlots && UtilitySlots.WingUI.EquipSlot.Item.IsAir);
+                   (UtilitySlotsConfig.Instance.AllowAccessorySlots && UtilitySlots.USSystem.WingUI.EquipSlot.Item.IsAir);
 
         }
 
@@ -20,7 +20,7 @@ namespace UtilitySlots {
             return item.wingSlot > 0 &&
                    !UtilitySlots.OverrideRightClick() &&
                    (!UtilitySlotsConfig.Instance.AllowAccessorySlots ||
-                    !UtilitySlots.WingUI.EquipSlot.Item.IsAir ||
+                    !UtilitySlots.USSystem.WingUI.EquipSlot.Item.IsAir ||
                     Main.LocalPlayer.wingTimeMax == 0);
         }
 
@@ -37,14 +37,14 @@ namespace UtilitySlots {
 
     internal class GlobalBalloonItem : GlobalItem
     {
-        public override bool CanEquipAccessory(Item item, Player player, int slot)
+        public override bool CanEquipAccessory(Item item, Player player, int slot, bool modded)
         {
-            if (item.balloonSlot <= 0) return base.CanEquipAccessory(item, player, slot);
+            if (item.balloonSlot <= 0) return base.CanEquipAccessory(item, player, slot, modded);
 
-            BalloonSlotUI ui = UtilitySlots.BalloonUI;
+            BalloonSlotUI ui = UtilitySlots.USSystem.BalloonUI;
 
             return ui.Panel.ContainsPoint(Main.MouseScreen) ||
-                   (UtilitySlotsConfig.Instance.AllowAccessorySlots && UtilitySlots.BalloonUI.EquipSlot.Item.balloonSlot > 0);
+                   (UtilitySlotsConfig.Instance.AllowAccessorySlots && UtilitySlots.USSystem.BalloonUI.EquipSlot.Item.balloonSlot > 0);
 
         }
 
@@ -53,7 +53,7 @@ namespace UtilitySlots {
             return item.balloonSlot > 0 &&
                    !UtilitySlots.OverrideRightClick() &&
                    (!UtilitySlotsConfig.Instance.AllowAccessorySlots ||
-                    !(UtilitySlots.BalloonUI.EquipSlot.Item.balloonSlot > 0));
+                    !(UtilitySlots.USSystem.BalloonUI.EquipSlot.Item.balloonSlot > 0));
         }
 
         public override void RightClick(Item item, Player player)
@@ -69,14 +69,14 @@ namespace UtilitySlots {
     }
     internal class GlobalShoeItem : GlobalItem
     {
-        public override bool CanEquipAccessory(Item item, Player player, int slot)
+        public override bool CanEquipAccessory(Item item, Player player, int slot, bool modded)
         {
-            if (item.shoeSlot <= 0) return base.CanEquipAccessory(item, player, slot);
+            if (item.shoeSlot <= 0) return base.CanEquipAccessory(item, player, slot, modded);
 
-            ShoeSlotUI ui = UtilitySlots.ShoeUI;
+            ShoeSlotUI ui = UtilitySlots.USSystem.ShoeUI;
 
             return ui.Panel.ContainsPoint(Main.MouseScreen) ||
-                   (UtilitySlotsConfig.Instance.AllowAccessorySlots && UtilitySlots.ShoeUI.EquipSlot.Item.shoeSlot > 0);
+                   (UtilitySlotsConfig.Instance.AllowAccessorySlots && UtilitySlots.USSystem.ShoeUI.EquipSlot.Item.shoeSlot > 0);
 
         }
 
@@ -85,7 +85,7 @@ namespace UtilitySlots {
             return item.shoeSlot > 0 &&
                    !UtilitySlots.OverrideRightClick() &&
                    (!UtilitySlotsConfig.Instance.AllowAccessorySlots ||
-                    !(UtilitySlots.ShoeUI.EquipSlot.Item.shoeSlot > 0));
+                    !(UtilitySlots.USSystem.ShoeUI.EquipSlot.Item.shoeSlot > 0));
         }
 
         public override void RightClick(Item item, Player player)

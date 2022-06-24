@@ -1,12 +1,13 @@
 ﻿using CustomSlot;
 using CustomSlot.UI;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.Localization;
 using Terraria.ModLoader;
 
-namespace UtilitySlots.UI {
+namespace UtilitySlots14.UI {
     public class SlotProps
     {
         public string Tag { get; set; }
@@ -74,7 +75,7 @@ namespace UtilitySlots.UI {
         public override void OnInitialize() {
             base.OnInitialize();
             UtilitySlots mod = ModContent.GetInstance<UtilitySlots>();
-            CroppedTexture2D emptyTexture = new CroppedTexture2D(mod.GetTexture(Props.TextureName),
+            CroppedTexture2D emptyTexture = new CroppedTexture2D(ModContent.Request<Texture2D>(Props.TextureName).Value,
                                                                  CustomItemSlot.DefaultColors.EmptyTexture);
 
             EquipSlot.IsValidItem = Props.IsValidItem;

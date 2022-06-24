@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.UI;
@@ -140,7 +141,7 @@ namespace CustomSlot.UI {
                 if(Main.mapEnabled) {
                     int adjustY = 600;
 
-                    if(Main.player[Main.myPlayer].ExtraAccessorySlotsShouldShow) {
+                    if(Main.player[Main.myPlayer].GetAmountOfExtraAccessorySlotsToShow() > 0) { //TODO: Is this the right fix for 1.4? No clue
                         adjustY = 610 + PlayerInput.UsingGamepad.ToInt() * 30;
                     }
 
@@ -150,7 +151,7 @@ namespace CustomSlot.UI {
                 }
 
                 rX = Main.screenWidth - 92 - 14 - ((slotSize + HorizontalSlotMargin) * 3)
-                     - (int)(Main.extraTexture[58].Width * EquipSlot.Scale);
+                     - (int)(TextureAssets.Extra[58].Value.Width * EquipSlot.Scale);
                 rY = mapH + 174;
             }
 

@@ -3,7 +3,7 @@ using CustomSlot.UI;
 using Microsoft.Xna.Framework;
 using Terraria.ModLoader.Config;
 
-namespace UtilitySlots {
+namespace UtilitySlots14 {
     public class UtilitySlotsConfig : ModConfig {
 
         private AccessorySlotsUI.Location lastSlotLocation = AccessorySlotsUI.Location.Accessories;

@@ -9,111 +9,30 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using Terraria.UI;
-using UtilitySlots.UI;
+using UtilitySlots14.UI;
 
-namespace UtilitySlots {
-    public class UtilitySlots : Mod {
+namespace UtilitySlots14 {
+    public class UtilitySlots : Mod
+    {
         private static List<Func<bool>> rightClickOverrides;
-
-        private UserInterface wingSlotInterface;
-        private UserInterface balloonSlotInterface;
-        private UserInterface shoeSlotInterface;
-
-        public static WingSlotUI WingUI;
-        public static BalloonSlotUI BalloonUI;
-        public static ShoeSlotUI ShoeUI;
-
         public static bool WingSlotModInstalled;
         public static bool DisableUtilitySlotModifiers = false;
 
+        public static UtilitySlotsSystem USSystem;
+
         public override void Load() {
             rightClickOverrides = new List<Func<bool>>();
-            WingSlotModInstalled = ModLoader.GetMod("WingSlot") != null;
-
-            if(!Main.dedServ) {
-                if (!WingSlotModInstalled)
-                {
-                    wingSlotInterface = new UserInterface();
-                    WingUI = new WingSlotUI();
-                    WingUI.Activate();
-                    wingSlotInterface.SetState(WingUI);
-                }
-
-                balloonSlotInterface = new UserInterface();
-                BalloonUI = new BalloonSlotUI();
-                BalloonUI.Activate();
-                balloonSlotInterface.SetState(BalloonUI);
-
-                shoeSlotInterface = new UserInterface();
-                ShoeUI = new ShoeSlotUI();
-                ShoeUI.Activate();
-                shoeSlotInterface.SetState(ShoeUI);
-            }
+            if (ModLoader.TryGetMod("WingSlot", out var wingSlotInstalled))
+                WingSlotModInstalled = wingSlotInstalled != null;
+            USSystem = new UtilitySlotsSystem();
         }
 
         public override void Unload()
         {
-            if (!WingSlotModInstalled)
-                WingUI.Unload();
-            BalloonUI.Unload();
-            ShoeUI.Unload();
-
             if(rightClickOverrides == null) return;
 
             rightClickOverrides.Clear();
             rightClickOverrides = null;
-        }
-
-        public override void UpdateUI(GameTime gameTime) {
-            if (!WingSlotModInstalled)
-                if (WingUI.IsVisible)
-                    wingSlotInterface?.Update(gameTime);
-            if(BalloonUI.IsVisible)
-                balloonSlotInterface?.Update(gameTime);
-            if(ShoeUI.IsVisible)
-                shoeSlotInterface?.Update(gameTime);
-        }
-
-        public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers) {
-            int inventoryLayer = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Inventory"));
-            
-            if (inventoryLayer != -1) {
-                if (!WingSlotModInstalled)
-                {
-                    layers.Insert(
-                        inventoryLayer,
-                        new LegacyGameInterfaceLayer(
-                          "Wing Slot: Custom Slot UI",
-                          () =>
-                          {
-                              if (WingUI.IsVisible)
-                                  wingSlotInterface.Draw(Main.spriteBatch, new GameTime());
-                              return true;
-                          },
-                          InterfaceScaleType.UI));
-                }
-                layers.Insert(
-                    inventoryLayer,
-                    new LegacyGameInterfaceLayer(
-                      "Balloon Slot: Custom Slot UI",
-                      () => {
-                          if (BalloonUI.IsVisible)
-                              balloonSlotInterface.Draw(Main.spriteBatch, new GameTime());
-                          return true;
-                      },
-                      InterfaceScaleType.UI));
-                layers.Insert(
-                    inventoryLayer,
-                    new LegacyGameInterfaceLayer(
-                      "Shoe Slot: Custom Slot UI",
-                      () => {
-                          if (ShoeUI.IsVisible)
-                              shoeSlotInterface.Draw(Main.spriteBatch, new GameTime());
-                          return true;
-                      },
-                      InterfaceScaleType.UI));
-
-            }
         }
 
         public override object Call(params object[] args) {
@@ -132,35 +51,35 @@ namespace UtilitySlots {
                             //{ "ShowCustomLocationPanel", UtilitySlotsConfig.Instance.ShowCustomLocationPanel }
                         };
                     case "getwingequip":
-                        return WingSlotModInstalled ? null : WingUI.EquipSlot.Item;
+                        return WingSlotModInstalled ? null : USSystem.WingUI.EquipSlot.Item;
                     case "getwingvanity":
                     case "getwingsocial":
-                        return WingSlotModInstalled ? null : WingUI.SocialSlot.Item;
+                        return WingSlotModInstalled ? null : USSystem.WingUI.SocialSlot.Item;
                     case "getwingdye":
-                        return WingSlotModInstalled ? null : WingUI.DyeSlot.Item;
+                        return WingSlotModInstalled ? null : USSystem.WingUI.DyeSlot.Item;
                     case "getwingvisible":
-                        return WingSlotModInstalled ? null : WingUI.SocialSlot.Item.stack > 0 ? WingUI.SocialSlot.Item
-                                                                    : WingUI.EquipSlot.Item;
+                        return WingSlotModInstalled ? null : USSystem.WingUI.SocialSlot.Item.stack > 0 ? USSystem.WingUI.SocialSlot.Item
+                                                                    : USSystem.WingUI.EquipSlot.Item;
                     case "getballoonequip":
-                        return BalloonUI.EquipSlot.Item;
+                        return USSystem.BalloonUI.EquipSlot.Item;
                     case "getballoonvanity":
                     case "getballoonsocial":
-                        return BalloonUI.SocialSlot.Item;
+                        return USSystem.BalloonUI.SocialSlot.Item;
                     case "getballoondye":
-                        return BalloonUI.DyeSlot.Item;
+                        return USSystem.BalloonUI.DyeSlot.Item;
                     case "getballoonvisible":
-                        return BalloonUI.SocialSlot.Item.stack > 0 ? BalloonUI.SocialSlot.Item
-                                                                    : BalloonUI.EquipSlot.Item;
+                        return USSystem.BalloonUI.SocialSlot.Item.stack > 0 ? USSystem.BalloonUI.SocialSlot.Item
+                                                                    : USSystem.BalloonUI.EquipSlot.Item;
                     case "getshoeequip":
-                        return ShoeUI.EquipSlot.Item;
+                        return USSystem.ShoeUI.EquipSlot.Item;
                     case "getshoevanity":
                     case "getshoesocial":
-                        return ShoeUI.SocialSlot.Item;
+                        return USSystem.ShoeUI.SocialSlot.Item;
                     case "getshoedye":
-                        return ShoeUI.DyeSlot.Item;
+                        return USSystem.ShoeUI.DyeSlot.Item;
                     case "getshoevisible":
-                        return ShoeUI.SocialSlot.Item.stack > 0 ? ShoeUI.SocialSlot.Item
-                                                                    : ShoeUI.EquipSlot.Item;
+                        return USSystem.ShoeUI.SocialSlot.Item.stack > 0 ? USSystem.ShoeUI.SocialSlot.Item
+                                                                    : USSystem.ShoeUI.EquipSlot.Item;
                     case "add":
                     case "remove":
                         // wingSlot.Call(/* "add" or "remove" */, /* func<bool> returns true to cancel/false to continue */);
